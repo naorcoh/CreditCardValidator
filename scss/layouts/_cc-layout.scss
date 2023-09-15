@@ -1,0 +1,21 @@
+.cc-layout {
+  background-color: white;
+  border-radius: 10px;
+  margin: 0 auto;
+
+  > .container {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 4.5rem;
+  }
+
+  &__payment {
+  }
+
+  &__po {
+    max-width: 100%;
+  }
+}

@@ -1,0 +1,129 @@
+.order-summary {
+  display: grid;
+  justify-content: center;
+  background-color: #f0f0f0;
+  max-width: 500px;
+  min-height: 810px;
+  border-radius: 10px;
+  position: relative;
+  padding: 5.375em 2.188em 0 2.188em;
+}
+
+.order-summary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url(../../images/background/Ellipse-1.svg),
+    url(../../images/background/ellipse-2.svg);
+  background-position: 30% 10%, 80% 8%;
+  background-repeat: no-repeat;
+  background-size: 50%;
+  background-blend-mode: multiply;
+
+  filter: blur(75px);
+}
+
+.order-summary__header {
+  position: relative;
+}
+
+.order-summary__body {
+  position: relative;
+  column-gap: 0.75em;
+
+  display: grid;
+
+  // grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: min-content 1fr;
+  padding: 0em 1.25em 0em 1.25em;
+
+  // grid-auto-rows: 20px 30px;
+}
+
+.order-summary__footer {
+  // position: relative;
+
+  display: grid;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  padding: 0em 1.25em 0em 1.25em;
+}
+
+//table flat selectors
+.table-header-row {
+  display: grid;
+  &__title {
+    color: #575757;
+    font-family: Inter;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  &__total-pay {
+    color: #000;
+    font-family: Inter;
+    font-size: 64px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+}
+
+.tb-body-row-sum {
+  display: grid;
+  grid-column: 1/4;
+  grid-template-columns: minmax(max-content, 1fr) minmax(max-content, 1fr);
+  &__col-title {
+    // padding: 0 0.75em 0 0;
+    font-size: clamp(1rem, 0.75rem + 1.5vw, 26px);
+
+    color: #000;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  &__col-price {
+    font-size: clamp(0.75rem, 0.75rem + 1.5vw, 24px);
+
+    justify-self: end;
+
+    color: #000;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+}
+
+.tb-body-row-prop {
+  display: grid;
+  grid-template-columns: min-content min-content;
+  &__col-key {
+    font-size: clamp(0.75rem, 0.75rem + 1.5vw, 20px);
+
+    color: #575757;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  &__col-value {
+    font-size: clamp(0.75rem, 0.75rem + 1.5vw, 20px);
+
+    color: #575757;
+    font-family: Inter;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+}
+
+.tb-row-separator {
+  grid-column: 2/3;
+}

@@ -1,0 +1,15 @@
+.btn {
+  border: none;
+  border-radius: 10px;
+  background: #9563ff;
+  color: #fff;
+  font-family: "Rubik", sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  &--cc {
+    max-width: 237px;
+    min-height: 66.1px;
+  }
+}

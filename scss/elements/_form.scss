@@ -1,0 +1,45 @@
+.form {
+  &__label {
+    line-height: normal;
+    &--cc {
+      color: #575757;
+      font-family: "Inter", sans-serif;
+      font-size: 1.25rem;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+  }
+
+  &__input {
+    border-radius: 10px;
+    border-bottom: 1px solid #9563ff;
+    background: #eee;
+    line-height: 4.13rem;
+    // width: 100%;
+
+    &::placeholder {
+      color: #a175ff;
+      padding: 1.34em;
+      font-family: "Inter", sans-serif;
+      font-size: clamp(14px, 23px, 3vw);
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      width: max-content;
+    }
+
+    &--placeholder-card::placeholder {
+      padding-left: 10px;
+    }
+    &--radiusless-right {
+      border-top-right-radius: 0px;
+      border-bottom-right-radius: 0px;
+    }
+
+    &--radiusless-left {
+      border-top-left-radius: 0px;
+      border-bottom-left-radius: 0px;
+    }
+  }
+}

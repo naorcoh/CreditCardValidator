@@ -1,0 +1,105 @@
+.layout-form {
+  display: flex;
+  flex-direction: column;
+  gap: 9.825rem;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+
+    gap: 39px;
+    // padding: 0.75em;
+  }
+
+  &__body {
+    //outer display
+    // width: 100%;
+    max-width: 596px;
+
+    //inner display
+    display: grid;
+    // padding: 0.75em;
+
+    &--cc {
+      grid-template-columns: repeat(auto-fill, minmax(10px, 596px));
+      grid-template-areas: "a a" "b b" "c d" "e e" "f f" "g .";
+
+      gap: 10px;
+    }
+
+    li {
+      display: grid;
+      gap: 7px;
+      grid-column-gap: unset;
+    }
+    &__zone-a {
+      grid-area: a;
+    }
+
+    &__zone-b {
+      grid-area: b;
+      grid-template-areas: "l l" "icon in";
+      grid-auto-columns: 0.1fr 1fr;
+      &__label {
+        grid-area: l;
+      }
+      &__icon {
+        grid-area: icon;
+        display: flex;
+        align-items: center;
+
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+        border-bottom: 1px solid #9563ff;
+        background: #eee;
+
+        // width: 10%;
+      }
+      &__input {
+        grid-area: in;
+      }
+    }
+
+    &__zone-c {
+      max-width: 277px;
+      grid-area: c;
+    }
+
+    &__zone-d {
+      max-width: 235px;
+      grid-area: d;
+      justify-self: end;
+    }
+    &__zone-e {
+      grid-area: e;
+      grid-template-areas: "l l" "in btn";
+      &__label {
+        grid-area: l;
+      }
+      &__input {
+        grid-area: in;
+      }
+
+      &__btn {
+        border: none;
+        grid-area: btn;
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+        border-bottom: 1px solid #9563ff;
+        background: #eee;
+
+        color: #9563ff;
+        font-family: Inter;
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: normal;
+      }
+    }
+
+    &__zone-f {
+      grid-area: f;
+      padding-top: 2.125em;
+    }
+  }
+}
