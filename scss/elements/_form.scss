@@ -1,45 +1,92 @@
+@use "../abstracts";
 .form {
+  // li {
+  //   max-width: 100%;
+
+  //   &:focus-within {
+  //     border: #9563ff 2px solid;
+  //     // width: 100%;
+  //   }
+  // }
+
+  //label
+
   &__label {
-    line-height: normal;
-    &--cc {
-      color: #575757;
-      font-family: "Inter", sans-serif;
-      font-size: 1.25rem;
-      font-style: normal;
-      font-weight: 400;
-      line-height: normal;
-    }
+    @extend %label-base-style;
   }
+
+  //input
 
   &__input {
-    border-radius: 10px;
-    border-bottom: 1px solid #9563ff;
-    background: #eee;
-    line-height: 4.13rem;
-    // width: 100%;
+    @extend %base-input-style;
+
+    &--number {
+      border-radius: 0 10px 10px 0;
+    }
+    &--discount {
+      border-radius: 10px 0 0 10px;
+    }
+
+    &--discount-error {
+      background-color: #fdd;
+      border-radius: 10px 0 0 0;
+    }
+
+    &--number-error {
+      border-radius: 0 10px 0 0;
+      background-color: #fdd;
+    }
+
+    &--error {
+      background-color: #fdd;
+      border-radius: 10px 10px 0 0;
+    }
+
+    &:invalid {
+      background-color: #fdd;
+      border-radius: 10px 10px 0 0;
+    }
 
     &::placeholder {
-      color: #a175ff;
-      padding: 1.34em;
-      font-family: "Inter", sans-serif;
-      font-size: clamp(14px, 23px, 3vw);
-      font-style: normal;
-      font-weight: 400;
-      line-height: normal;
-      width: max-content;
-    }
-
-    &--placeholder-card::placeholder {
-      padding-left: 10px;
-    }
-    &--radiusless-right {
-      border-top-right-radius: 0px;
-      border-bottom-right-radius: 0px;
-    }
-
-    &--radiusless-left {
-      border-top-left-radius: 0px;
-      border-bottom-left-radius: 0px;
+      @extend %placeholder-base-style;
     }
   }
+
+  //icon
+  &__icon {
+    @extend %base-input-style;
+    border-radius: 10px 0 0px 10px;
+
+    &--error {
+      border-radius: 10px 0 0 0px;
+
+      background-color: #fdd;
+    }
+  }
+
+  //btn
+
+  &__discount-btn {
+    @extend %base-input-style;
+    border-radius: 0 10px 10px 0;
+    border: unset;
+    border-block-end: 1px solid #9563ff;
+    &--error {
+      background-color: #fdd;
+      border-radius: 0 10px 0 0;
+    }
+  }
+
+  &__error-msg {
+    padding: 1em;
+    color: white;
+    background-color: #900;
+    border-radius: 0 0 10px 10px;
+    font-family: "Inter", sans-serif;
+    // font-size: 1rem;
+  }
+}
+
+.hidden {
+  display: none;
 }

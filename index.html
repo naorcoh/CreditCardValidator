@@ -11,13 +11,14 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Rubik:ital,wght@0,300;0,400;0,500;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
       rel="stylesheet"
     />
+    <script src="scripts/main.js" async defer></script>
   </head>
   <body>
     <main>
       <section class="cc-layout">
         <div class="container">
           <div class="cc-layout__payment">
-            <form class="form layout-form" action="/" method="get">
+            <form class="form layout-form" id="form" novalidate>
               <div class="layout-form__header">
                 <h1 class="layout-form__header__title">Let’s Make Payment</h1>
                 <p class="layout-form__header__content">
@@ -27,25 +28,37 @@
                 </p>
               </div>
 
-              <ul class="layout-form__body layout-form__body--cc">
-                <li class="layout-form__body__zone-a">
-                  <label for="userName" class="form__label form__label--cc"
+              <ul class="form form-cc-lyt">
+                <li class="form-cc-lyt__name cc-in-items-lyt">
+                  <label
+                    for="card-holders"
+                    class="form__label cc-in-items-lyt__label"
                     >Cardholder’s Name</label
                   ><input
                     type="text"
                     autocomplete="given-name"
-                    class="user-name form__input"
-                    id="userName"
+                    class="form__input cc-in-items-lyt__input"
+                    id="card-holders"
                     placeholder="PAULINA CHIMAROKE"
+                    minlength="2"
+                    maxlength="30"
                   />
+                  <span
+                    id="chn-error-message"
+                    class="form__error-msg hidden cc-in-items-lyt__error"
+                  ></span>
                 </li>
-                <li class="layout-form__body__zone-b">
+                <li
+                  class="form-cc-lyt__card-number cc-in-items-lyt cc-in-items-lyt--number"
+                >
                   <label
                     for="cardNumer"
-                    class="form__label--cc layout-form__body__zone-b__label"
+                    class="form__label cc-in-items-lyt__label cc-in-items-lyt__label--number"
                     >Card Number</label
                   >
-                  <div class="layout-form__body__zone-b__icon">
+                  <div
+                    class="form__icon cc-in-items-lyt__icon cc-in-items-lyt__icon--number"
+                  >
                     <img
                       src="/images/mastercardpng.png"
                       width="60.638px"
@@ -55,46 +68,88 @@
                   </div>
                   <input
                     type="text"
-                    class="card-number form__input form__input--radiusless-left form__input--placeholder-card"
+                    class="form__input form__input--number cc-in-items-lyt__input cc-in-items-lyt__input--number"
                     id="cardNumer"
                     placeholder="9870 3456 7890 6473"
                   />
+                  <span class="form__error-msg hidden cc-in-items-lyt__error"
+                    >Lorem, ipsum dolor sit amet consectetur adipisicing
+                    elit.</span
+                  >
                 </li>
 
-                <li class="layout-form__body__zone-c">
-                  <label for="expiryDate" class="form__label--cc">Expiry</label>
+                <li
+                  class="form-cc-lyt__expiry cc-in-items-lyt cc-in-items-lyt--expiry"
+                >
+                  <label
+                    for="expiryDate"
+                    class="form__label cc-in-items-lyt__label--expiry"
+                    >Expiry</label
+                  >
                   <input
                     type="text"
                     id="expiryDate"
                     placeholder="03 / 25"
-                    class="form__input"
+                    class="form__input form__input--expiry-date"
                   />
+                  <span
+                    class="form__error-msg hidden cc-in-items-lyt__error cc-in-items-lyt__error--expiry"
+                    >Lorem, ipsum dolor sit amet consectetur adipisicing
+                    elit.</span
+                  >
                 </li>
-                <li class="layout-form__body__zone-d">
-                  <label for="cvcCode" class="form__label--cc">CVC</label>
+                <li
+                  class="form-cc-lyt__cvc cc-in-items-lyt cc-in-items-lyt--cvc"
+                >
+                  <label
+                    for="cvcCode"
+                    class="form__label cc-in-items-lyt__label--cvc"
+                    >CVC</label
+                  >
                   <input
                     type="text"
                     id="cvcCode"
                     placeholder="654"
-                    class="form__input"
+                    class="form__input cc-in-items-lyt__input--cvc"
                   />
+                  <span class="form__error-msg hidden cc-in-items-lyt__error"
+                    >Lorem, ipsum dolor sit amet consectetur adipisicing
+                    elit.</span
+                  >
                 </li>
-                <li class="layout-form__body__zone-e">
+                <li
+                  class="form-cc-lyt__discount-code cc-in-items-lyt cc-in-items-lyt--discount"
+                >
                   <label
                     for="discountCode"
-                    class="form__label--cc layout-form__body__zone-e__label"
+                    class="form__label cc-in-items-lyt__label cc-in-items-lyt__label--discount"
                     >Discount Code</label
                   >
                   <input
                     type="text"
                     id="discountCode"
                     placeholder="CHIKAMSO-20-OFF"
-                    class="form__input form__input--radiusless-right"
+                    class="form__input form__input--discount cc-in-items-lyt__input cc-in-items-lyt__input--discount"
                   />
-                  <button class="layout-form__body__zone-e__btn">Apply</button>
+                  <button
+                    class="form__discount-btn cc-in-items-lyt__btn cc-in-items-lyt__btn--discount"
+                  >
+                    Apply
+                  </button>
+                  <span class="form__error-msg hidden cc-in-items-lyt__error"
+                    >Lorem, ipsum dolor sit amet consectetur adipisicing
+                    elit.</span
+                  >
                 </li>
-                <li class="layout-form__body__zone-f">
-                  <button class="btn btn--cc">Pay</button>
+                <li class="form-cc-lyt__btn">
+                  <button
+                    type="submit"
+                    formaction="/"
+                    id="payBtn"
+                    class="btn btn--cc"
+                  >
+                    Pay
+                  </button>
                 </li>
               </ul>
             </form>

@@ -1,0 +1,28 @@
+%base-input-style {
+  padding-left: 0.75em;
+  color: #a175ff;
+  background: #eee;
+  border-bottom: 1px solid #9563ff;
+  line-height: 4.13rem;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
+  border-radius: 10px;
+}
+
+%label-base-style {
+  color: #575757;
+  font-family: "Inter", sans-serif;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+%placeholder-base-style {
+  color: #a175ff;
+  // padding-left: 0.75rem;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
