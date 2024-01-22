@@ -506,13 +506,19 @@ p {
   grid-template-columns: max-content 1fr;
 }
 .cc-in-items-lyt--discount {
+  max-width: 100%;
+  width: 100%;
   grid-template-columns: 1fr min-content;
 }
 .cc-in-items-lyt--expiry {
-  grid-template-columns: minmax(60%, max-content);
+  grid-template-columns: minmax(50px, 0.3fr) minmax(10px, 0.01fr) minmax(50px, 0.3fr);
+  grid-auto-rows: 32.867px minmax(66.078px, 0.08fr) minmax(18px, min-content);
 }
 .cc-in-items-lyt--cvc {
-  grid-template-columns: minmax(40%, min-content);
+  max-width: 100%;
+  width: 100%;
+  grid-template-columns: minmax(40%, 0.67fr);
+  grid-auto-rows: 32.867px minmax(66.078px, 0.08fr) minmax(18px, 0.9fr);
   justify-content: end;
 }
 .cc-in-items-lyt__label {
@@ -522,7 +528,7 @@ p {
   grid-column: 1/3;
 }
 .cc-in-items-lyt__label--expiry {
-  grid-column: 1/3;
+  grid-column: 1/4;
 }
 .cc-in-items-lyt__label--number {
   grid-column: 1/3;
@@ -557,7 +563,7 @@ p {
   grid-column: 1/3;
 }
 .cc-in-items-lyt__error--expiry {
-  grid-column: 1/2;
+  grid-column: 1/4;
 }
 .cc-in-items-lyt__error--cvc {
   grid-column: 1/2;
@@ -677,7 +683,7 @@ p {
   grid-column: 2/3;
 }
 
-.form__input, .form__icon, .form__discount-btn {
+.form__input, .form__input--mm, .form__icon, .form__discount-btn {
   padding-left: 0.75em;
   color: #a175ff;
   background: #eee;
@@ -716,10 +722,6 @@ p {
   background-color: #fdd;
   border-radius: 10px 0 0 0;
 }
-.form__input--number-error {
-  border-radius: 0 10px 0 0;
-  background-color: #fdd;
-}
 .form__input--error {
   background-color: #fdd;
   border-radius: 10px 10px 0 0;
@@ -727,6 +729,27 @@ p {
 .form__input:invalid {
   background-color: #fdd;
   border-radius: 10px 10px 0 0;
+}
+.form__input--number-error:invalid {
+  border-radius: 0 10px 0 0;
+  background-color: #fdd;
+}
+.form__input--number-error {
+  border-radius: 0 10px 0 0px;
+  background-color: #fdd;
+}
+.form__input--mm {
+  padding-left: 0.75em;
+  border-radius: 10px 0px 0px 10px;
+}
+.form__input--yy {
+  color: #a175ff;
+  background: #eee;
+  border-bottom: 1px solid #9563ff;
+  line-height: 4.13rem;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
+  border-radius: 0px 10px 10px 0px;
 }
 .form__icon {
   border-radius: 10px 0 0px 10px;
@@ -750,6 +773,18 @@ p {
   background-color: #900;
   border-radius: 0 0 10px 10px;
   font-family: "Inter", sans-serif;
+}
+.form__slash {
+  display: inline-flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  color: #a175ff;
+  background: #eee;
+  border-bottom: 1px solid #9563ff;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
+  font-size: 1.5rem;
 }
 
 .hidden {
@@ -775,6 +810,10 @@ img {
 .btn--cc {
   max-width: 237px;
   min-height: 66.1px;
+}
+.btn--cc-disabled {
+  background: rgba(149, 99, 255, 0.5215686275);
+  cursor: not-allowed;
 }
 
 /*# sourceMappingURL=main.css.map */

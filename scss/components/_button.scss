@@ -12,4 +12,9 @@
     max-width: 237px;
     min-height: 66.1px;
   }
+
+  &--cc-disabled {
+    background: #9563ff85;
+    cursor: not-allowed;
+  }
 }

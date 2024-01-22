@@ -52,15 +52,16 @@
                   class="form-cc-lyt__card-number cc-in-items-lyt cc-in-items-lyt--number"
                 >
                   <label
-                    for="cardNumer"
+                    for="card-number"
                     class="form__label cc-in-items-lyt__label cc-in-items-lyt__label--number"
                     >Card Number</label
                   >
                   <div
+                    id="cc-icon"
                     class="form__icon cc-in-items-lyt__icon cc-in-items-lyt__icon--number"
                   >
                     <img
-                      src="/images/mastercardpng.png"
+                      src="/images/cc-icons/cc_icon.png"
                       width="60.638px"
                       height="33.042"
                       alt=""
@@ -68,14 +69,18 @@
                   </div>
                   <input
                     type="text"
+                    inputmode="numeric"
+                    autocomplete="cc-number"
                     class="form__input form__input--number cc-in-items-lyt__input cc-in-items-lyt__input--number"
-                    id="cardNumer"
+                    id="ccn"
+                    minlength="8"
+                    maxlength="19"
                     placeholder="9870 3456 7890 6473"
                   />
-                  <span class="form__error-msg hidden cc-in-items-lyt__error"
-                    >Lorem, ipsum dolor sit amet consectetur adipisicing
-                    elit.</span
-                  >
+                  <span
+                    id="ccn-invalid-message"
+                    class="form__error-msg hidden cc-in-items-lyt__error"
+                  ></span>
                 </li>
 
                 <li
@@ -88,34 +93,47 @@
                   >
                   <input
                     type="text"
-                    id="expiryDate"
-                    placeholder="03 / 25"
-                    class="form__input form__input--expiry-date"
+                    id="mm-input"
+                    placeholder="mm"
+                    class="form__input form__input--mm"
+                    maxlength="2"
                   />
+                  <span class="form__slash">/</span>
+
+                  <input
+                    type="text"
+                    placeholder="yy"
+                    id="yy-input"
+                    class="form__input form__input--yy"
+                  />
+
                   <span
+                    id="mm-invalid-message"
                     class="form__error-msg hidden cc-in-items-lyt__error cc-in-items-lyt__error--expiry"
-                    >Lorem, ipsum dolor sit amet consectetur adipisicing
-                    elit.</span
-                  >
+                  ></span>
                 </li>
                 <li
                   class="form-cc-lyt__cvc cc-in-items-lyt cc-in-items-lyt--cvc"
                 >
                   <label
-                    for="cvcCode"
+                    for="cvc"
                     class="form__label cc-in-items-lyt__label--cvc"
                     >CVC</label
                   >
                   <input
                     type="text"
-                    id="cvcCode"
+                    id="cvc"
                     placeholder="654"
+                    inputmode="numeric"
+                    autocomplete="cc-csc"
+                    minlength="3"
+                    maxlength="3"
                     class="form__input cc-in-items-lyt__input--cvc"
                   />
-                  <span class="form__error-msg hidden cc-in-items-lyt__error"
-                    >Lorem, ipsum dolor sit amet consectetur adipisicing
-                    elit.</span
-                  >
+                  <span
+                    id="cvc-invalid-message"
+                    class="form__error-msg hidden cc-in-items-lyt__error"
+                  ></span>
                 </li>
                 <li
                   class="form-cc-lyt__discount-code cc-in-items-lyt cc-in-items-lyt--discount"
@@ -145,7 +163,7 @@
                   <button
                     type="submit"
                     formaction="/"
-                    id="payBtn"
+                    id="pay-btn"
                     class="btn btn--cc"
                   >
                     Pay
