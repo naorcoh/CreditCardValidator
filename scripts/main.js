@@ -3,6 +3,7 @@ const chnInput = document.querySelector("#card-holders")
 const ccnInput = document.querySelector("#ccn")
 const cvcInput = document.querySelector("#cvc")
 const mmInput = document.querySelector("#mm-input")
+const yyInput = document.querySelector("#yy-input")
 
 //msg(span) selector
 const cardHoldersErrorMsg = document.querySelector("#chn-error-message")
@@ -26,10 +27,13 @@ const brElementIdSet = new Set([
   "br-7",
   "br-8",
   "br-9",
+  "br-10",
+  "br-11",
 ])
 
 payBtn.disabled = true
 payBtn.classList.add("btn--cc-disabled")
+let helper = 0
 
 const chnHandler = (evt) => {
   tooShortMsg(
@@ -79,6 +83,7 @@ const ccnHandler = (evt) => {
 const focusSibling = function (target) {
   const nextTarget = document.querySelector("#yy-input")
   nextTarget && nextTarget.focus()
+
   // // if callback is supplied we return the sibling target which has focus
   // callback && callback(nextTarget)
 }
@@ -90,13 +95,27 @@ const mmHandler = (evt) => {
   mmValidations(evt.target, formatMMarr[1], mmInvalidMsg, "only digit allow")
   mmInRangeValidations(
     evt.target,
+    yyInput,
     formatMMarr[1],
     mmInvalidMsg,
     "the month range is allowed from 1-12 or 01-12"
   )
 
+  isCardExpValid(evt.target, yyInput, mmInvalidMsg, "expiry date is not valid")
+
   2 <= evt.target.value.length && focusSibling(evt.target)
   evt.stopImmediatePropagation()
+  return evt.target.value
+}
+
+const focusLoseMM = mmInput.addEventListener("change", (evt) => {
+  console.log(evt.target.value)
+  if (evt.target.value == 1) evt.target.value = "01"
+})
+
+const yearHandler = (evt) => {
+  inRangeValidations(evt.target, mmInvalidMsg, "test msg")
+  isCardExpValid(mmInput, evt.target, mmInvalidMsg, "expiry date is not valid")
 }
 
 const cvcHandler = (evt) => {
@@ -135,6 +154,7 @@ chnInput.addEventListener("input", chnHandler)
 ccnInput.addEventListener("input", ccnHandler)
 cvcInput.addEventListener("input", cvcHandler)
 mmInput.addEventListener("input", mmHandler)
+yyInput.addEventListener("input", yearHandler)
 form.addEventListener("input", formHandler)
 
 //card holders constraint validation functions
@@ -418,12 +438,20 @@ const changeIconByCCissuer = (input, ccIcon) => {
   }
 }
 
+//truth table
+
 const mmTrueTable = new Map([
   ["mmValidations", false],
   ["mmInRangeValidations", false],
 ])
 
-console.log(mmTrueTable)
+let expiryTruthTable = new Map([
+  ["mmInRangeValidations", false],
+  ["yearRangeIsValid", false],
+  ["mmValidations", false],
+  ["isCardExpValid", false],
+])
+
 const mmValidations = (input, previousUserInput, msgElement, msgText) => {
   const msgTxtNode = document.createTextNode(msgText)
   const msgBrTwo = document.createElement("br")
@@ -432,9 +460,11 @@ const mmValidations = (input, previousUserInput, msgElement, msgText) => {
   const regex = /^\d+$/g
 
   if (!regex.test(previousUserInput) && !previousUserInput.length == 0) {
-    mmTrueTable.set("mmValidations", false)
+    expiryTruthTable.set("mmValidations", false)
     //show the msgElement by remove hidden class
-    msgElement.classList.remove("hidden")
+    showRedBG(msgElement, expiryTruthTable)
+
+    // msgElement.classList.remove("hidden")
 
     //if msg exist in msgElement don't append it agin!;
     if (!msgElement.textContent.includes(msgText)) {
@@ -443,35 +473,45 @@ const mmValidations = (input, previousUserInput, msgElement, msgText) => {
       msgElement.append(msgBrTwo)
     }
   } else {
-    mmTrueTable.set("mmValidations", true)
-
+    expiryTruthTable.set("mmValidations", true)
     input.setCustomValidity("")
     removeTextNodeByMsgContent(msgElement, msgText)
     removeBrById(msgElement, id)
+    hideRedBG(msgElement, expiryTruthTable)
   }
+}
 
+const inRangeValidations = (input, msgElement, msgText) => {
+  const id = [...brElementIdSet][9]
+  const currentYear = new Date().getFullYear()
   if (
-    input.checkValidity() &&
-    mmTrueTable.get("mmValidations") &&
-    mmTrueTable.get("mmInRangeValidations")
+    (currentYear <= input.value && input.value.length == 4) ||
+    input.value == ""
   ) {
-    //add hidden class to hide msg element
-
-    msgElement.classList.add("hidden")
-    //for the input we don't need spacial class because
-    //we have :invalid and :valid pseudo class fire when input.checkValidity() true/false
+    expiryTruthTable.set("yearRangeIsValid", true)
+    input.setCustomValidity("")
+    removeTextNodeByMsgContent(msgElement, msgText)
+    removeBrById(msgElement, id)
+    hideRedBG(msgElement, expiryTruthTable)
+  } else if (input.value.length == 4 && currentYear > input.value) {
+    expiryTruthTable.set("yearRangeIsValid", false)
+    input.setCustomValidity("year in range?")
+    // msgElement.classList.remove("hidden")
+    showRedBG(msgElement, expiryTruthTable)
+    noRepeat(msgElement, msgText, 9)
   }
 }
 
 const mmInRangeValidations = (
   input,
+  yInput,
   previousUserInput,
   msgElement,
   msgText
 ) => {
   const msgTxtNode = document.createTextNode(msgText)
   const msgBrTwo = document.createElement("br")
-  const id = [...brElementIdSet][7]
+  const id = [...brElementIdSet][8]
   msgBrTwo.setAttribute("id", id)
 
   if (
@@ -480,9 +520,12 @@ const mmInRangeValidations = (
     !previousUserInput == "00"
   ) {
     //show the msgElement by remove hidden class
-    mmTrueTable.set("mmInRangeValidations", false)
-    msgElement.classList.remove("hidden")
+    expiryTruthTable.set("mmInRangeValidations", false)
+    // msgElement.classList.remove("hidden")
+
     input.setCustomValidity("msgText")
+
+    showRedBG(msgElement, expiryTruthTable)
 
     //if msg exist in msgElement don't append it agin!;
     if (!msgElement.textContent.includes(msgText)) {
@@ -491,16 +534,69 @@ const mmInRangeValidations = (
       msgElement.append(msgBrTwo)
     }
   } else {
-    mmTrueTable.set("mmInRangeValidations", true)
+    expiryTruthTable.set("mmInRangeValidations", true)
+    removeTextNodeByMsgContent(msgElement, msgText)
+    removeBrById(msgElement, id)
+    hideRedBG(msgElement, expiryTruthTable)
+  }
+}
+
+const isCardExpValid = (mInput, yInput, msgElement, msgText) => {
+  const dateObj = new Date()
+  const currentMonth = dateObj.getMonth() + 1
+  const currentYear = dateObj.getFullYear()
+  const id = [...brElementIdSet][10]
+
+  if (
+    mInput.value <= currentMonth &&
+    yInput.value <= currentYear &&
+    yInput.value.length == 4 &&
+    mInput.value.length == 2
+  ) {
+    expiryTruthTable.set("isCardExpValid", false)
+    noRepeat(msgElement, msgText, 10)
+    showRedBG(msgElement, expiryTruthTable)
+  } else {
+    expiryTruthTable.set("isCardExpValid", true)
+    hideRedBG(msgElement, expiryTruthTable)
     removeTextNodeByMsgContent(msgElement, msgText)
     removeBrById(msgElement, id)
   }
+}
 
-  if (
-    input.checkValidity() &&
-    mmTrueTable.get("mmValidations") &&
-    mmTrueTable.get("mmInRangeValidations")
-  ) {
+const noRepeat = (msgElement, msgText, idNum) => {
+  const msgTxtNode = document.createTextNode(msgText)
+  const msgBrTwo = document.createElement("br")
+  const id = [...brElementIdSet][idNum]
+  msgBrTwo.setAttribute("id", id)
+  //if msg exist in msgElement don't append it agin!;
+  if (!msgElement.textContent.includes(msgText)) {
+    //append text nod and br element
+    msgElement.append(msgTxtNode)
+    msgElement.append(msgBrTwo)
+  }
+}
+const everyTrue = (map) => {
+  return [...map.values()].every((x) => x == true)
+}
+
+const everyFalse = (map) => {
+  return [...map.values()].every((x) => x == false)
+}
+
+const someTrue = (map) => {
+  return [...map.values()].some((x) => x == true)
+}
+
+const showRedBG = (msgElement, map) => {
+  if (someTrue(map) || everyFalse(map)) {
+    //show the msgElement by remove hidden class
+    msgElement.classList.remove("hidden")
+  }
+}
+
+const hideRedBG = (msgElement, map) => {
+  if (everyTrue(map)) {
     //add hidden class to hide msg element
 
     msgElement.classList.add("hidden")
@@ -582,8 +678,6 @@ let rmOutOfRange = (formatUserInput) => {
     formatUserInput = formatUserInput.replaceAll(formatUserInput, "yes")
   }
 }
-
-console.log("let check what going", rmOutOfRange("33"))
 
 const ccFormatV = (input) => {
   const results = []
