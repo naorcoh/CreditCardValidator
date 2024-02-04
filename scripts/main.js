@@ -109,7 +109,6 @@ const mmHandler = (evt) => {
 }
 
 const focusLoseMM = mmInput.addEventListener("change", (evt) => {
-  console.log(evt.target.value)
   if (evt.target.value == 1) evt.target.value = "01"
 })
 
