@@ -29,6 +29,8 @@ const brElementIdSet = new Set([
   "br-9",
   "br-10",
   "br-11",
+  "br-12",
+  "br-showYearPastError-13",
 ])
 
 payBtn.disabled = true
@@ -95,7 +97,7 @@ const mmHandler = (evt) => {
   mmValidations(evt.target, formatMMarr[1], mmInvalidMsg, "only digit allow")
   mmInRangeValidations(
     evt.target,
-    yyInput,
+
     formatMMarr[1],
     mmInvalidMsg,
     "the month range is allowed from 1-12 or 01-12"
@@ -113,8 +115,22 @@ const focusLoseMM = mmInput.addEventListener("change", (evt) => {
 })
 
 const yearHandler = (evt) => {
-  inRangeValidations(evt.target, mmInvalidMsg, "test msg")
-  isCardExpValid(mmInput, evt.target, mmInvalidMsg, "expiry date is not valid")
+  const id = [...brElementIdSet][12]
+
+  // inRangeValidations(evt.target, mmInvalidMsg, "test msg")
+
+  validatePastYear(
+    evt.target,
+    mmInvalidMsg,
+    "the year are enter past please enter valid year",
+    id
+  )
+  // isCardExpValid(mmInput, evt.target, mmInvalidMsg, "expiry date is not valid")
+  // isMonthInEmpty(mmInput, evt.target, mmInvalidMsg, "please fill month input")
+}
+
+const monthBlurEvtHandler = (evt) => {
+  // isMonthInEmpty(evt.target, mmInvalidMsg, "please fill month input")
 }
 
 const cvcHandler = (evt) => {
@@ -152,7 +168,9 @@ const isSubmittable = (formElm, btn, chnInput, cnnInput, cvcInput) => {
 chnInput.addEventListener("input", chnHandler)
 ccnInput.addEventListener("input", ccnHandler)
 cvcInput.addEventListener("input", cvcHandler)
-mmInput.addEventListener("input", mmHandler)
+// mmInput.addEventListener("input", mmHandler)
+// mmInput.addEventListener("blur", monthBlurEvtHandler)
+
 yyInput.addEventListener("input", yearHandler)
 form.addEventListener("input", formHandler)
 
@@ -449,6 +467,8 @@ let expiryTruthTable = new Map([
   ["yearRangeIsValid", false],
   ["mmValidations", false],
   ["isCardExpValid", false],
+  ["monthIsEmpty", false],
+  // ["yearIsEmpty", false],
 ])
 
 const mmValidations = (input, previousUserInput, msgElement, msgText) => {
@@ -480,13 +500,84 @@ const mmValidations = (input, previousUserInput, msgElement, msgText) => {
   }
 }
 
-const inRangeValidations = (input, msgElement, msgText) => {
+//error massage
+const validatePastYear = (input, element, errorText, id) => {
+  if (isYearPast(input)) {
+    appendErrorTextNodToElement(element, errorText)
+    appendBRToErrorElement(element, id)
+    input.setCustomValidity("past year validations")
+    showError(element)
+  } else {
+    removeTextNodeByMsgContent(element, errorText)
+    removeElementByID(element, id)
+    input.setCustomValidity("")
+    hideError(element)
+  }
+}
+
+//logic test
+const isYearPast = (input) => {
+  const currentYear = new Date().getFullYear()
+  return input.value < currentYear && input.value.length == 4
+}
+const isTextInclude = (element, txt) => {
+  return element.textContent.includes(txt)
+}
+
+const isNotEmptyArr = (arr) => {
+  if (arr.length > 0) return true
+  return false
+}
+
+//error massage element manipulations
+const showError = (msgElement) => {
+  msgElement.classList.remove("hidden")
+}
+const hideError = (msgElement) => {
+  msgElement.classList.add("hidden")
+}
+
+const createBRElement = (id) => {
+  const br = document.createElement("br")
+  br.setAttribute("id", id)
+  return br
+}
+
+const appendBRToErrorElement = (errorMsgElement, id) => {
+  const br = createBRElement(id)
+  if (isNotEmptyArr(errorMsgElement.children)) {
+    for (const childElement of errorMsgElement.children) {
+      if (childElement.id !== br.id) {
+        errorMsgElement.append(br)
+      }
+    }
+  } else {
+    errorMsgElement.append(br)
+  }
+}
+const appendErrorTextNodToElement = (element, errorText) => {
+  const errorTextNod = document.createTextNode(errorText)
+
+  //append text nod if the text not!! include
+  if (!isTextInclude(element, errorText)) {
+    element.append(errorTextNod)
+  }
+}
+
+const removeElementByID = (element, id) => {
+  if (isNotEmptyArr(element.children)) {
+    for (const childElement of element.children) {
+      if (childElement.id == id) {
+        element.removeChild(childElement)
+      }
+    }
+  }
+}
+
+const validateFutureYear = (input, msgElement, msgText) => {
   const id = [...brElementIdSet][9]
   const currentYear = new Date().getFullYear()
-  if (
-    (currentYear <= input.value && input.value.length == 4) ||
-    input.value == ""
-  ) {
+  if (isFutureYear(input)) {
     expiryTruthTable.set("yearRangeIsValid", true)
     input.setCustomValidity("")
     removeTextNodeByMsgContent(msgElement, msgText)
@@ -501,9 +592,9 @@ const inRangeValidations = (input, msgElement, msgText) => {
   }
 }
 
+//single input check
 const mmInRangeValidations = (
   input,
-  yInput,
   previousUserInput,
   msgElement,
   msgText
@@ -519,7 +610,7 @@ const mmInRangeValidations = (
     !previousUserInput == "00"
   ) {
     //show the msgElement by remove hidden class
-    expiryTruthTable.set("mmInRangeValidations", false)
+    // expiryTruthTable.set("mmInRangeValidations", false)
     // msgElement.classList.remove("hidden")
 
     input.setCustomValidity("msgText")
@@ -536,7 +627,9 @@ const mmInRangeValidations = (
     expiryTruthTable.set("mmInRangeValidations", true)
     removeTextNodeByMsgContent(msgElement, msgText)
     removeBrById(msgElement, id)
-    hideRedBG(msgElement, expiryTruthTable)
+    msgElement.classList.add("hidden")
+
+    // hideRedBG(msgElement, expiryTruthTable)
   }
 }
 
@@ -557,6 +650,20 @@ const isCardExpValid = (mInput, yInput, msgElement, msgText) => {
     showRedBG(msgElement, expiryTruthTable)
   } else {
     expiryTruthTable.set("isCardExpValid", true)
+    hideRedBG(msgElement, expiryTruthTable)
+    removeTextNodeByMsgContent(msgElement, msgText)
+    removeBrById(msgElement, id)
+  }
+}
+
+const isMonthInEmpty = (mInput, msgElement, msgText) => {
+  const id = [...brElementIdSet][11]
+
+  if (mInput.value == "") {
+    noRepeat(msgElement, msgText, id)
+    showRedBG(msgElement, expiryTruthTable)
+  } else {
+    expiryTruthTable.set("monthIsEmpty", true)
     hideRedBG(msgElement, expiryTruthTable)
     removeTextNodeByMsgContent(msgElement, msgText)
     removeBrById(msgElement, id)
@@ -612,6 +719,7 @@ const removeBrById = (pElement, id) => {
     }
   }
 }
+
 const removeTextNodeByMsgContent = (element, msgText) => {
   for (const node of element.childNodes) {
     if (node.nodeName == "#text" && node.nodeValue.includes(msgText)) {
