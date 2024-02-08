@@ -31,6 +31,7 @@ const brElementIdSet = new Set([
   "br-11",
   "br-12",
   "br-showYearPastError-13",
+  "br-onlyNumberError-14",
 ])
 
 payBtn.disabled = true
@@ -91,23 +92,31 @@ const focusSibling = function (target) {
 }
 
 const mmHandler = (evt) => {
-  const formatMMarr = mmFormat(evt.target)
-  evt.target.value = formatMMarr[0]
-
-  mmValidations(evt.target, formatMMarr[1], mmInvalidMsg, "only digit allow")
-  mmInRangeValidations(
+  const id = [...brElementIdSet][13]
+  const previousInputValue = evt.target.value
+  formatNonDigit(evt.target)
+  console.log(previousInputValue)
+  validateDigitMonthInput(
     evt.target,
-
-    formatMMarr[1],
+    previousInputValue,
     mmInvalidMsg,
-    "the month range is allowed from 1-12 or 01-12"
+    "only digit allow",
+    id
   )
 
-  isCardExpValid(evt.target, yyInput, mmInvalidMsg, "expiry date is not valid")
+  // mmInRangeValidations(
+  //   evt.target,
 
-  2 <= evt.target.value.length && focusSibling(evt.target)
-  evt.stopImmediatePropagation()
-  return evt.target.value
+  //   formatMMarr[1],
+  //   mmInvalidMsg,
+  //   "the month range is allowed from 1-12 or 01-12"
+  // )
+
+  // isCardExpValid(evt.target, yyInput, mmInvalidMsg, "expiry date is not valid")
+
+  // 2 <= evt.target.value.length && focusSibling(evt.target)
+  // evt.stopImmediatePropagation()
+  // return evt.target.value
 }
 
 const focusLoseMM = mmInput.addEventListener("change", (evt) => {
@@ -168,7 +177,7 @@ const isSubmittable = (formElm, btn, chnInput, cnnInput, cvcInput) => {
 chnInput.addEventListener("input", chnHandler)
 ccnInput.addEventListener("input", ccnHandler)
 cvcInput.addEventListener("input", cvcHandler)
-// mmInput.addEventListener("input", mmHandler)
+mmInput.addEventListener("input", mmHandler)
 // mmInput.addEventListener("blur", monthBlurEvtHandler)
 
 yyInput.addEventListener("input", yearHandler)
@@ -456,12 +465,10 @@ const changeIconByCCissuer = (input, ccIcon) => {
 }
 
 //truth table
-
 const mmTrueTable = new Map([
   ["mmValidations", false],
   ["mmInRangeValidations", false],
 ])
-
 let expiryTruthTable = new Map([
   ["mmInRangeValidations", false],
   ["yearRangeIsValid", false],
@@ -470,107 +477,124 @@ let expiryTruthTable = new Map([
   ["monthIsEmpty", false],
   // ["yearIsEmpty", false],
 ])
+//input formatting functions
+const formatNonDigit = (input) => {
+  const formattedValue = input.value.replaceAll(/\D/g, "").substring(0, 2)
+  // update the input value to the formatted value
+  input.value = formattedValue
+}
+const ccFormat = (input, msgElement, ccIcon, msgText) => {
+  const v = input.value.replace(/\s+/g, "").replace(/[^0-9]+/g, "")
+  //check for validity from formatter
+  onlyNumber(input, msgElement, ccIcon, msgText[0])
+  // need to fix
+  // input.value = input.value.replace(/\s+/g, "")
+  // tooShortMsg(input, msgElement, msgText[1])
+  // checkFormatValue(input, msgElement, ccIcon, msgText[1])
+  changeIconByCCissuer(input, ccIcon)
 
-const mmValidations = (input, previousUserInput, msgElement, msgText) => {
-  const msgTxtNode = document.createTextNode(msgText)
-  const msgBrTwo = document.createElement("br")
-  const id = [...brElementIdSet][6]
-  msgBrTwo.setAttribute("id", id)
-  const regex = /^\d+$/g
+  const matches = v.match(/\d{4,16}/g)
+  const match = (matches && matches[0]) || ""
 
-  if (!regex.test(previousUserInput) && !previousUserInput.length == 0) {
-    expiryTruthTable.set("mmValidations", false)
-    //show the msgElement by remove hidden class
-    showRedBG(msgElement, expiryTruthTable)
+  const parts = []
 
-    // msgElement.classList.remove("hidden")
-
-    //if msg exist in msgElement don't append it agin!;
-    if (!msgElement.textContent.includes(msgText)) {
-      //append text nod and br element
-      msgElement.append(msgTxtNode)
-      msgElement.append(msgBrTwo)
-    }
+  for (i = 0, len = match.length; i < len; i += 4) {
+    parts.push(match.substring(i, i + 4))
+  }
+  if (parts.length) {
+    return parts.join(" ")
   } else {
-    expiryTruthTable.set("mmValidations", true)
-    input.setCustomValidity("")
-    removeTextNodeByMsgContent(msgElement, msgText)
-    removeBrById(msgElement, id)
-    hideRedBG(msgElement, expiryTruthTable)
+    return input.value.replaceAll(/[^0-9]+/g, "")
   }
 }
+const mmFormat = (input) => {
+  const results = []
+  const previousUserInput = input.value
+  let formatUserInput = input.value
+    .replaceAll(/[^0-9]+/g, "")
+    .replaceAll(/\s+/g, "")
+    .substring(0, 2)
 
-//error massage
-const validatePastYear = (input, element, errorText, id) => {
-  if (isYearPast(input)) {
-    appendErrorTextNodToElement(element, errorText)
-    appendBRToErrorElement(element, id)
-    input.setCustomValidity("past year validations")
-    showError(element)
+  if (!(formatUserInput <= 12) || formatUserInput === "00") {
+    formatUserInput = formatUserInput.replaceAll(formatUserInput, "")
+  }
+
+  // after focus!!!
+  if (
+    formatUserInput.length == 1 &&
+    formatUserInput >= 2 &&
+    formatUserInput <= 9
+  ) {
+    formatUserInput = `0${formatUserInput}`
+  }
+
+  results.push(formatUserInput)
+  results.push(previousUserInput)
+
+  return results
+}
+const ccFormatV = (input) => {
+  const results = []
+  const userInput = input.value
+  const cleanValue = input.value
+    .replaceAll(/[^0-9]+/g, "")
+    .replaceAll(/\s+/g, "")
+
+  let matches = cleanValue.match(/\d{4,16}/g)
+  let match = (matches && matches[0]) || ""
+  let parts = []
+
+  for (i = 0, len = match.length; i < len; i += 4) {
+    parts.push(match.substring(i, i + 4))
+  }
+
+  if (parts.length) {
+    parts = parts.join(" ")
+    results.push(parts)
   } else {
-    removeTextNodeByMsgContent(element, errorText)
-    removeElementByID(element, id)
-    input.setCustomValidity("")
-    hideError(element)
+    results.push(cleanValue)
   }
+
+  results.push(userInput.replaceAll(/\s+/g, ""))
+
+  return results
+}
+const replaceAllChar = (inputEl) => {
+  return inputEl.value.replaceAll(/[^0-9]+/g, "")
 }
 
-//logic test
-const isYearPast = (input) => {
-  const currentYear = new Date().getFullYear()
-  return input.value < currentYear && input.value.length == 4
-}
-const isTextInclude = (element, txt) => {
-  return element.textContent.includes(txt)
-}
-
-const isNotEmptyArr = (arr) => {
-  if (arr.length > 0) return true
-  return false
-}
-
-//error massage element manipulations
-const showError = (msgElement) => {
-  msgElement.classList.remove("hidden")
-}
-const hideError = (msgElement) => {
-  msgElement.classList.add("hidden")
-}
-
-const createBRElement = (id) => {
-  const br = document.createElement("br")
-  br.setAttribute("id", id)
-  return br
-}
-
-const appendBRToErrorElement = (errorMsgElement, id) => {
-  const br = createBRElement(id)
-  if (isNotEmptyArr(errorMsgElement.children)) {
-    for (const childElement of errorMsgElement.children) {
-      if (childElement.id !== br.id) {
-        errorMsgElement.append(br)
-      }
-    }
+//input validations
+const validateDigitMonthInput = (
+  monthInput,
+  previousUserValue,
+  errorElement,
+  errorText,
+  id
+) => {
+  console.log(isContainNonDigit(previousUserValue))
+  if (isContainNonDigit(previousUserValue)) {
+    appendErrorTextNodToElement(errorElement, errorText)
+    appendBRToErrorElement(errorElement, id)
+    monthInput.setCustomValidity("validate numeric month input")
+    showError(errorElement)
   } else {
-    errorMsgElement.append(br)
+    removeTextNodeByMsgContent(errorElement, errorText)
+    removeElementByID(errorElement, id)
+    monthInput.setCustomValidity("")
+    hideError(errorElement)
   }
 }
-const appendErrorTextNodToElement = (element, errorText) => {
-  const errorTextNod = document.createTextNode(errorText)
-
-  //append text nod if the text not!! include
-  if (!isTextInclude(element, errorText)) {
-    element.append(errorTextNod)
-  }
-}
-
-const removeElementByID = (element, id) => {
-  if (isNotEmptyArr(element.children)) {
-    for (const childElement of element.children) {
-      if (childElement.id == id) {
-        element.removeChild(childElement)
-      }
-    }
+const validatePastYear = (yearInput, errorElement, errorText, id) => {
+  if (isYearPast(yearInput)) {
+    appendErrorTextNodToElement(errorElement, errorText)
+    appendBRToErrorElement(errorElement, id)
+    yearInput.setCustomValidity("past year validations")
+    showError(errorElement)
+  } else {
+    removeTextNodeByMsgContent(errorElement, errorText)
+    removeElementByID(errorElement, id)
+    yearInput.setCustomValidity("")
+    hideError(errorElement)
   }
 }
 
@@ -592,7 +616,6 @@ const validateFutureYear = (input, msgElement, msgText) => {
   }
 }
 
-//single input check
 const mmInRangeValidations = (
   input,
   previousUserInput,
@@ -670,6 +693,76 @@ const isMonthInEmpty = (mInput, msgElement, msgText) => {
   }
 }
 
+//logic test
+const isContainNonDigit = (value) => {
+  const NON_DIGIT_REGEX = /\D+/g
+  return NON_DIGIT_REGEX.test(value)
+}
+const isNotBlank = (input) => {
+  return !input.value == ""
+}
+const isYearPast = (input) => {
+  const currentYear = new Date().getFullYear()
+  return input.value < currentYear && input.value.length == 4
+}
+const isTextInclude = (element, txt) => {
+  return element.textContent.includes(txt)
+}
+const isNotEmptyArr = (arr) => {
+  if (arr.length > 0) return true
+  return false
+}
+const everyTrue = (map) => {
+  return [...map.values()].every((x) => x == true)
+}
+const everyFalse = (map) => {
+  return [...map.values()].every((x) => x == false)
+}
+const someTrue = (map) => {
+  return [...map.values()].some((x) => x == true)
+}
+
+//DOM element manipulations
+const showError = (msgElement) => {
+  msgElement.classList.remove("hidden")
+}
+const hideError = (msgElement) => {
+  msgElement.classList.add("hidden")
+}
+const createBRElement = (id) => {
+  const br = document.createElement("br")
+  br.setAttribute("id", id)
+  return br
+}
+const appendBRToErrorElement = (errorMsgElement, id) => {
+  const br = createBRElement(id)
+  if (isNotEmptyArr(errorMsgElement.children)) {
+    for (const childElement of errorMsgElement.children) {
+      if (childElement.id !== br.id) {
+        errorMsgElement.append(br)
+      }
+    }
+  } else {
+    errorMsgElement.append(br)
+  }
+}
+const appendErrorTextNodToElement = (element, errorText) => {
+  const errorTextNod = document.createTextNode(errorText)
+
+  //append text nod if the text not!! include
+  if (!isTextInclude(element, errorText)) {
+    element.append(errorTextNod)
+  }
+}
+const removeElementByID = (element, id) => {
+  if (isNotEmptyArr(element.children)) {
+    for (const childElement of element.children) {
+      if (childElement.id == id) {
+        element.removeChild(childElement)
+      }
+    }
+  }
+}
 const noRepeat = (msgElement, msgText, idNum) => {
   const msgTxtNode = document.createTextNode(msgText)
   const msgBrTwo = document.createElement("br")
@@ -682,25 +775,12 @@ const noRepeat = (msgElement, msgText, idNum) => {
     msgElement.append(msgBrTwo)
   }
 }
-const everyTrue = (map) => {
-  return [...map.values()].every((x) => x == true)
-}
-
-const everyFalse = (map) => {
-  return [...map.values()].every((x) => x == false)
-}
-
-const someTrue = (map) => {
-  return [...map.values()].some((x) => x == true)
-}
-
 const showRedBG = (msgElement, map) => {
   if (someTrue(map) || everyFalse(map)) {
     //show the msgElement by remove hidden class
     msgElement.classList.remove("hidden")
   }
 }
-
 const hideRedBG = (msgElement, map) => {
   if (everyTrue(map)) {
     //add hidden class to hide msg element
@@ -710,8 +790,6 @@ const hideRedBG = (msgElement, map) => {
     //we have :invalid and :valid pseudo class fire when input.checkValidity() true/false
   }
 }
-
-//helper functions
 const removeBrById = (pElement, id) => {
   for (const childElement of pElement.children) {
     if (childElement.id == id) {
@@ -719,7 +797,6 @@ const removeBrById = (pElement, id) => {
     }
   }
 }
-
 const removeTextNodeByMsgContent = (element, msgText) => {
   for (const node of element.childNodes) {
     if (node.nodeName == "#text" && node.nodeValue.includes(msgText)) {
@@ -727,92 +804,8 @@ const removeTextNodeByMsgContent = (element, msgText) => {
     }
   }
 }
-//take from stackoverflow
-const ccFormat = (input, msgElement, ccIcon, msgText) => {
-  const v = input.value.replace(/\s+/g, "").replace(/[^0-9]+/g, "")
-  //check for validity from formatter
-  onlyNumber(input, msgElement, ccIcon, msgText[0])
-  // need to fix
-  // input.value = input.value.replace(/\s+/g, "")
-  // tooShortMsg(input, msgElement, msgText[1])
-  // checkFormatValue(input, msgElement, ccIcon, msgText[1])
-  changeIconByCCissuer(input, ccIcon)
-
-  const matches = v.match(/\d{4,16}/g)
-  const match = (matches && matches[0]) || ""
-
-  const parts = []
-
-  for (i = 0, len = match.length; i < len; i += 4) {
-    parts.push(match.substring(i, i + 4))
-  }
-  if (parts.length) {
-    return parts.join(" ")
-  } else {
-    return input.value.replaceAll(/[^0-9]+/g, "")
-  }
-}
-
-const mmFormat = (input) => {
-  const results = []
-  const previousUserInput = input.value
-  let formatUserInput = input.value
-    .replaceAll(/[^0-9]+/g, "")
-    .replaceAll(/\s+/g, "")
-    .substring(0, 2)
-
-  if (!(formatUserInput <= 12) || formatUserInput === "00") {
-    formatUserInput = formatUserInput.replaceAll(formatUserInput, "")
-  }
-
-  // after focus!!!
-  if (
-    formatUserInput.length == 1 &&
-    formatUserInput >= 2 &&
-    formatUserInput <= 9
-  ) {
-    formatUserInput = `0${formatUserInput}`
-  }
-
-  results.push(formatUserInput)
-  results.push(previousUserInput)
-
-  return results
-}
-
 let rmOutOfRange = (formatUserInput) => {
   if (!(formatUserInput <= 12) || formatUserInput === "00") {
     formatUserInput = formatUserInput.replaceAll(formatUserInput, "yes")
   }
-}
-
-const ccFormatV = (input) => {
-  const results = []
-  const userInput = input.value
-  const cleanValue = input.value
-    .replaceAll(/[^0-9]+/g, "")
-    .replaceAll(/\s+/g, "")
-
-  let matches = cleanValue.match(/\d{4,16}/g)
-  let match = (matches && matches[0]) || ""
-  let parts = []
-
-  for (i = 0, len = match.length; i < len; i += 4) {
-    parts.push(match.substring(i, i + 4))
-  }
-
-  if (parts.length) {
-    parts = parts.join(" ")
-    results.push(parts)
-  } else {
-    results.push(cleanValue)
-  }
-
-  results.push(userInput.replaceAll(/\s+/g, ""))
-
-  return results
-}
-
-const replaceAllChar = (inputEl) => {
-  return inputEl.value.replaceAll(/[^0-9]+/g, "")
 }
