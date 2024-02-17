@@ -67,6 +67,11 @@ const validateCHN = (evt) => {
   //summary
   //while calling reportValidity() or submitting the form is called interactively validating the constraints.
 }
+/*TO DO
+//when focus loss check valid after value update
+**/
+
+/*bug:**/
 
 cardHoldersInput.addEventListener("invalid", () => {
   console.log("invalid event fire")
