@@ -60,6 +60,16 @@
       border-radius: 10px 0px 0px 10px;
     }
 
+    &--mm-invalid-right {
+      @extend %base-input-style;
+      padding-left: 0.75em;
+      border-radius: 10px 0 0 0;
+      &:invalid {
+        background-color: #fdd;
+        border-radius: 10px 0 0 0;
+      }
+    }
+
     &--mm:placeholder-shown {
       // display: inline-flex;
       // justify-content: flex-start;
@@ -74,6 +84,19 @@
       font-family: "Inter", sans-serif;
       font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
       border-radius: 0px 10px 10px 0px;
+    }
+
+    &--yy-invalid-left {
+      color: #a175ff;
+      border-bottom: 1px solid #9563ff;
+      line-height: 4.13rem;
+      font-family: "Inter", sans-serif;
+      font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
+      border-radius: 0 10px 0 0;
+      &:invalid {
+        background-color: #fdd;
+        border-radius: 0 10px 0 0;
+      }
     }
 
     &::placeholder {
@@ -128,6 +151,9 @@
     font-family: "Inter", sans-serif;
     font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
     font-size: 1.5rem;
+    &--invalid {
+      background-color: #fdd;
+    }
   }
 }
 

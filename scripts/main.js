@@ -4,6 +4,7 @@ const ccnInput = document.querySelector("#ccn")
 const cvcInput = document.querySelector("#cvc")
 const mmInput = document.querySelector("#mm-input")
 const yyInput = document.querySelector("#yy-input")
+const expirySlash = document.querySelector("#slash-1")
 
 //msg(span) selector
 const cardHoldersErrorMsg = document.querySelector("#chn-error-message")
@@ -33,6 +34,7 @@ const brElementIdSet = new Set([
   "br-showYearPastError-13",
   "br-onlyNumberErrorMonth-14",
   "br-onlyNumberErrorYear-15",
+  "br-numberIsMonth-16",
 ])
 
 payBtn.disabled = true
@@ -93,16 +95,29 @@ const focusSibling = function (target) {
 }
 
 const mmHandler = (evt) => {
-  const id = [...brElementIdSet][13]
+  const id = [[...brElementIdSet][13], [...brElementIdSet][15]]
   const previousInputValue = evt.target.value
   formatNonDigit(evt.target, 0, 2)
+  formatNonMounth(evt.target)
   validateDigitMonthInput(
     evt.target,
     previousInputValue,
     mmInvalidMsg,
     "only digit allow",
-    id,
+    id[0],
     inputValidationResults
+  )
+  validateNumberIsMonth(
+    evt.target,
+    previousInputValue,
+    mmInvalidMsg,
+    "the month range is allowed from 1-12 or 01-12",
+    id[1],
+    "numberIsMonth",
+    inputValidationResults,
+    numberIsMounthValidationsResults,
+    monthInputValidationsResults,
+    brArray
   )
 
   // mmInRangeValidations(
@@ -497,18 +512,22 @@ const inputValidationResults = new Map([
   ["isMonthInputContainOnlyDigit", -1],
   ["isYearInputContainOnlyDigit", -1],
   ["isCurrentOrFutureYear", -1],
+  ["numberIsMonth", -1],
 ])
 
 let digitValidationsResults = new Map([
   ["isMonthInputContainOnlyDigit", -1],
   ["isYearInputContainOnlyDigit", -1],
 ])
+const numberIsMounthValidationsResults = new Map([["numberIsMonth", -1]])
 
 let isFutureYearValidationsResults = new Map([["isCurrentOrFutureYear", -1]])
 
 let monthInputValidationsResults = new Map([
   ["isMonthInputContainOnlyDigit", -1],
+  ["numberIsMonth", -1],
 ])
+
 let yearInputValidationsResults = new Map([
   ["isCurrentOrFutureYear", -1],
   ["isYearInputContainOnlyDigit", -1],
@@ -525,6 +544,13 @@ const formatNonDigit = (input, stringStart, stringEnd) => {
     .substring(stringStart, stringEnd)
   // update the input value to the formatted value
   input.value = formattedValue
+}
+const formatNonMounth = (input) => {
+  if (input.value > 12 || input.value == "00") {
+    input.value = ""
+  } else {
+    input.value = input.value
+  }
 }
 const ccFormat = (input, msgElement, ccIcon, msgText) => {
   const v = input.value.replace(/\s+/g, "").replace(/[^0-9]+/g, "")
@@ -623,6 +649,14 @@ const validateDigitMonthInput = (
     input.setCustomValidity("validate numeric in input")
     appendErrorTextNodToElement(errorElement, errorText)
     appendBRToErrorElement(errorElement, id, brArray)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsTestMap,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
     showError(errorElement)
   } else {
     inputValidationResults.set("isMonthInputContainOnlyDigit", true)
@@ -632,6 +666,14 @@ const validateDigitMonthInput = (
     removeMarkField(input, monthInputValidationsResults)
     removeErrorText(errorElement, errorText, digitValidationsResults)
     removeBrById(errorElement, id, brArray, digitValidationsResults)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsTestMap,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
     hideError(input, errorElement, validationsTestMap)
   }
 }
@@ -653,6 +695,15 @@ const validateDigitYearInput = (
 
     appendErrorTextNodToElement(errorElement, errorText)
     appendBRToErrorElement(errorElement, id, brArray)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsTestMap,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
+
     showError(errorElement)
   } else {
     inputValidationResults.set("isYearInputContainOnlyDigit", true)
@@ -662,35 +713,108 @@ const validateDigitYearInput = (
     removeMarkField(input, yearInputValidationsResults)
     removeErrorText(errorElement, errorText, digitValidationsResults)
     removeBrById(errorElement, id, brArray, digitValidationsResults)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsTestMap,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
     hideError(input, errorElement, validationsTestMap)
   }
 }
 const validatePastYear = (
-  yearInput,
+  input,
   errorElement,
   errorText,
   id,
   validationsTestMap
 ) => {
-  if (isYearPast(yearInput)) {
+  if (isYearPast(input)) {
     inputValidationResults.set("isCurrentOrFutureYear", false)
     yearInputValidationsResults.set("isCurrentOrFutureYear", false)
     isFutureYearValidationsResults.set("isCurrentOrFutureYear", false)
 
-    yearInput.setCustomValidity("past year validations")
+    input.setCustomValidity("past year validations")
 
     appendErrorTextNodToElement(errorElement, errorText)
     appendBRToErrorElement(errorElement, id, brArray)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsTestMap,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
     showError(errorElement)
   } else {
     inputValidationResults.set("isCurrentOrFutureYear", true)
     yearInputValidationsResults.set("isCurrentOrFutureYear", true)
     isFutureYearValidationsResults.set("isCurrentOrFutureYear", true)
 
-    removeMarkField(yearInput, yearInputValidationsResults)
+    removeMarkField(input, yearInputValidationsResults)
     removeErrorText(errorElement, errorText, isFutureYearValidationsResults)
     removeBrById(errorElement, id, brArray, isFutureYearValidationsResults)
-    hideError(yearInput, errorElement, validationsTestMap)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsTestMap,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
+    hideError(input, errorElement, validationsTestMap)
+  }
+}
+
+const validateNumberIsMonth = (
+  input,
+  previousUserValue,
+  errorElement,
+  errorText,
+  id,
+  validtionName,
+  validationsResults,
+  validationResult,
+  inputValidationsResults,
+  BRstateArray
+) => {
+  if (isNotMonth(previousUserValue)) {
+    validationsResults.set(validtionName, false)
+    validationResult.set(validtionName, false)
+    inputValidationsResults.set(validtionName, false)
+
+    input.setCustomValidity("the numer is enter is not month")
+    appendErrorTextNodToElement(errorElement, errorText)
+    appendBRToErrorElement(errorElement, id, BRstateArray)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsResults,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsResults, "form__slash--invalid")
+    showError(errorElement)
+  } else {
+    validationsResults.set(validtionName, true)
+    validationResult.set(validtionName, true)
+    inputValidationsResults.set(validtionName, true)
+
+    removeMarkField(input, inputValidationsResults)
+    removeErrorText(errorElement, errorText, validationResult)
+    removeBrById(errorElement, id, BRstateArray, validationResult)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsResults,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsResults, "form__slash--invalid")
+    hideError(input, errorElement, validationsResults)
   }
 }
 
@@ -793,6 +917,15 @@ const isMonthInEmpty = (mInput, msgElement, msgText) => {
 function isNumber(value) {
   return !isNaN(value)
 }
+
+const isMonth = (value) => {
+  const NUM_IS_MONTH_REGEX = /^(0?[1-9]|1[0-2])$/g
+  return NUM_IS_MONTH_REGEX.test(value)
+}
+
+const isNotMonth = (value) => {
+  return !isMonth(value)
+}
 const isFourDigitNumber = (input) => {
   return /^\d{4}$/.test(input.value)
 }
@@ -857,6 +990,8 @@ const isHidable = (map) => {
 const showError = (msgElement) => {
   msgElement.classList.remove("hidden")
 }
+
+//TODO: remove input parameter in hideError() functions and refrence functions
 const hideError = (input, msgElement, validationsTestMap) => {
   if (isHidable(validationsTestMap)) {
     msgElement.classList.add("hidden")
@@ -926,8 +1061,11 @@ const removeBrById = (
 
   if (
     brElementStateArray.includes(id) &&
-    isTextErrorNotUsed(validationsTestResults)
+    isTextErrorNotUsed(validationsTestResults) &&
+    !(brToRemove == null)
   ) {
+    const index = brElementStateArray.indexOf(id)
+    brElementStateArray.splice(index, 1)
     brToRemove.remove()
   }
 }
@@ -1010,6 +1148,31 @@ const setTrueToValidityTestByID = (
       break
   }
 }
+
+const setBorderRadius = (
+  inputFirst,
+  inputSecond,
+  state,
+  firstClassName,
+  secondClassName
+) => {
+  if (!isHidable(state)) {
+    inputFirst.classList.add(firstClassName)
+    inputSecond.classList.add(secondClassName)
+  } else {
+    inputFirst.classList.remove(firstClassName)
+    inputSecond.classList.remove(secondClassName)
+  }
+}
+
+const setSlashInvalid = (element, state, className) => {
+  if (!isHidable(state)) {
+    element.classList.add(className)
+  } else {
+    element.classList.remove(className)
+  }
+}
+
 const getValidityTestResult = (
   input,
   map,

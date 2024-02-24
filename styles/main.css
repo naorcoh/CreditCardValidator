@@ -683,7 +683,7 @@ p {
   grid-column: 2/3;
 }
 
-.form__input, .form__input--mm, .form__icon, .form__discount-btn {
+.form__input, .form__input--mm, .form__input--mm-invalid-right, .form__icon, .form__discount-btn {
   padding-left: 0.75em;
   color: #a175ff;
   background: #eee;
@@ -742,6 +742,14 @@ p {
   padding-left: 0.75em;
   border-radius: 10px 0px 0px 10px;
 }
+.form__input--mm-invalid-right {
+  padding-left: 0.75em;
+  border-radius: 10px 0 0 0;
+}
+.form__input--mm-invalid-right:invalid {
+  background-color: #fdd;
+  border-radius: 10px 0 0 0;
+}
 .form__input--yy {
   color: #a175ff;
   background: #eee;
@@ -750,6 +758,18 @@ p {
   font-family: "Inter", sans-serif;
   font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
   border-radius: 0px 10px 10px 0px;
+}
+.form__input--yy-invalid-left {
+  color: #a175ff;
+  border-bottom: 1px solid #9563ff;
+  line-height: 4.13rem;
+  font-family: "Inter", sans-serif;
+  font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
+  border-radius: 0 10px 0 0;
+}
+.form__input--yy-invalid-left:invalid {
+  background-color: #fdd;
+  border-radius: 0 10px 0 0;
 }
 .form__icon {
   border-radius: 10px 0 0px 10px;
@@ -785,6 +805,9 @@ p {
   font-family: "Inter", sans-serif;
   font-size: clamp(0.75rem, 0.75rem + 1vw, 3vw);
   font-size: 1.5rem;
+}
+.form__slash--invalid {
+  background-color: #fdd;
 }
 
 .hidden {
