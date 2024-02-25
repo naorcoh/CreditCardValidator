@@ -719,7 +719,7 @@ const validateDigitMonthInput = (
       "form__input--yy-invalid-left"
     )
     setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
-    hideError(input, errorElement, validationsTestMap)
+    hideError(errorElement, validationsTestMap)
   }
 }
 
@@ -766,7 +766,7 @@ const validateDigitYearInput = (
       "form__input--yy-invalid-left"
     )
     setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
-    hideError(input, errorElement, validationsTestMap)
+    hideError(errorElement, validationsTestMap)
   }
 }
 const validatePastYear = (
@@ -810,7 +810,7 @@ const validatePastYear = (
       "form__input--yy-invalid-left"
     )
     setSlashInvalid(expirySlash, validationsTestMap, "form__slash--invalid")
-    hideError(input, errorElement, validationsTestMap)
+    hideError(errorElement, validationsTestMap)
   }
 }
 
@@ -859,28 +859,9 @@ const validateNumberIsMonth = (
       "form__input--yy-invalid-left"
     )
     setSlashInvalid(expirySlash, validationsResults, "form__slash--invalid")
-    hideError(input, errorElement, validationsResults)
+    hideError(errorElement, validationsResults)
   }
 }
-
-const validateFutureYear = (input, msgElement, msgText) => {
-  const id = [...brElementIdSet][9]
-  const currentYear = new Date().getFullYear()
-  if (isFutureYear(input)) {
-    expiryTruthTable.set("yearRangeIsValid", true)
-    input.setCustomValidity("")
-    removeTextNodeByMsgContent(msgElement, msgText)
-    removeBrById(msgElement, id)
-    hideRedBG(msgElement, expiryTruthTable)
-  } else if (input.value.length == 4 && currentYear > input.value) {
-    expiryTruthTable.set("yearRangeIsValid", false)
-    input.setCustomValidity("year in range?")
-    // msgElement.classList.remove("hidden")
-    showRedBG(msgElement, expiryTruthTable)
-    noRepeat(msgElement, msgText, 9)
-  }
-}
-
 const validateCardExpiration = (
   monthInput,
   yearInput,
@@ -936,7 +917,25 @@ const validateCardExpiration = (
       "form__input--yy-invalid-left"
     )
     setSlashInvalid(expirySlash, validationsResults, "form__slash--invalid")
-    hideError(yearInput, errorElement, validationsResults)
+    hideError(errorElement, validationsResults)
+  }
+}
+
+const validateFutureYear = (input, msgElement, msgText) => {
+  const id = [...brElementIdSet][9]
+  const currentYear = new Date().getFullYear()
+  if (isFutureYear(input)) {
+    expiryTruthTable.set("yearRangeIsValid", true)
+    input.setCustomValidity("")
+    removeTextNodeByMsgContent(msgElement, msgText)
+    removeBrById(msgElement, id)
+    hideRedBG(msgElement, expiryTruthTable)
+  } else if (input.value.length == 4 && currentYear > input.value) {
+    expiryTruthTable.set("yearRangeIsValid", false)
+    input.setCustomValidity("year in range?")
+    // msgElement.classList.remove("hidden")
+    showRedBG(msgElement, expiryTruthTable)
+    noRepeat(msgElement, msgText, 9)
   }
 }
 
@@ -1107,8 +1106,7 @@ const showError = (msgElement) => {
   msgElement.classList.remove("hidden")
 }
 
-//TODO: remove input parameter in hideError() functions and refrence functions
-const hideError = (input, msgElement, validationsTestMap) => {
+const hideError = (msgElement, validationsTestMap) => {
   if (isHidable(validationsTestMap)) {
     msgElement.classList.add("hidden")
   }

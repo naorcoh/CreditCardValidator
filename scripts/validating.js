@@ -68,7 +68,9 @@ const validateCHN = (evt) => {
   //while calling reportValidity() or submitting the form is called interactively validating the constraints.
 }
 /*TO DO
-//when focus loss check valid after value update
+//when focus loss check valid after value update and check result if emtpy yo show error to the user the input is empty
+//remove 
+
 **/
 
 /*bug:**/
