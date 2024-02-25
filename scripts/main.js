@@ -35,6 +35,7 @@ const brElementIdSet = new Set([
   "br-onlyNumberErrorMonth-14",
   "br-onlyNumberErrorYear-15",
   "br-numberIsMonth-16",
+  "br-dateIsExpire-17",
 ])
 
 payBtn.disabled = true
@@ -95,7 +96,11 @@ const focusSibling = function (target) {
 }
 
 const mmHandler = (evt) => {
-  const id = [[...brElementIdSet][13], [...brElementIdSet][15]]
+  const id = [
+    [...brElementIdSet][13],
+    [...brElementIdSet][15],
+    [...brElementIdSet][16],
+  ]
   const previousInputValue = evt.target.value
   formatNonDigit(evt.target, 0, 2)
   formatNonMounth(evt.target)
@@ -119,6 +124,20 @@ const mmHandler = (evt) => {
     monthInputValidationsResults,
     brArray
   )
+  validateCardExpiration(
+    mmInput,
+    yyInput,
+    mmInvalidMsg,
+    "The expiration date you entered is invalid. Please make sure the date you eneter is not expire",
+    id[2],
+    "isMonthExpire",
+    "isYearExpire",
+    inputValidationResults,
+    isCardDateExpire,
+    monthInputValidationsResults,
+    yearInputValidationsResults,
+    brArray
+  )
 
   // mmInRangeValidations(
   //   evt.target,
@@ -140,7 +159,11 @@ const mmHandler = (evt) => {
 // })
 
 const yearHandler = (evt) => {
-  const id = [[...brElementIdSet][12], [...brElementIdSet][13]]
+  const id = [
+    [...brElementIdSet][12],
+    [...brElementIdSet][13],
+    [...brElementIdSet][16],
+  ]
 
   const previousInputValue = evt.target.value
 
@@ -163,6 +186,20 @@ const yearHandler = (evt) => {
     "the year are enter past please enter valid year",
     id[0],
     inputValidationResults
+  )
+  validateCardExpiration(
+    mmInput,
+    yyInput,
+    mmInvalidMsg,
+    "The expiration date you entered is invalid. Please make sure the date you eneter is not expire",
+    id[2],
+    "isMonthExpire",
+    "isYearExpire",
+    inputValidationResults,
+    isCardDateExpire,
+    monthInputValidationsResults,
+    yearInputValidationsResults,
+    brArray
   )
   // isCardExpValid(mmInput, evt.target, mmInvalidMsg, "expiry date is not valid")
   // isMonthInEmpty(mmInput, evt.target, mmInvalidMsg, "please fill month input")
@@ -513,11 +550,17 @@ const inputValidationResults = new Map([
   ["isYearInputContainOnlyDigit", -1],
   ["isCurrentOrFutureYear", -1],
   ["numberIsMonth", -1],
+  ["isMonthExpire", -1],
+  ["isYearExpire", -1],
 ])
 
 let digitValidationsResults = new Map([
   ["isMonthInputContainOnlyDigit", -1],
   ["isYearInputContainOnlyDigit", -1],
+])
+const isCardDateExpire = new Map([
+  ["isMonthExpire", -1],
+  ["isYearExpire", -1],
 ])
 const numberIsMounthValidationsResults = new Map([["numberIsMonth", -1]])
 
@@ -526,11 +569,13 @@ let isFutureYearValidationsResults = new Map([["isCurrentOrFutureYear", -1]])
 let monthInputValidationsResults = new Map([
   ["isMonthInputContainOnlyDigit", -1],
   ["numberIsMonth", -1],
+  ["isMonthExpire", -1],
 ])
 
 let yearInputValidationsResults = new Map([
   ["isCurrentOrFutureYear", -1],
   ["isYearInputContainOnlyDigit", -1],
+  ["isYearExpire", -1],
 ])
 
 let brArray = []
@@ -786,7 +831,7 @@ const validateNumberIsMonth = (
     validationResult.set(validtionName, false)
     inputValidationsResults.set(validtionName, false)
 
-    input.setCustomValidity("the numer is enter is not month")
+    input.setCustomValidity("the number is enter is not month")
     appendErrorTextNodToElement(errorElement, errorText)
     appendBRToErrorElement(errorElement, id, BRstateArray)
     setBorderRadius(
@@ -833,6 +878,65 @@ const validateFutureYear = (input, msgElement, msgText) => {
     // msgElement.classList.remove("hidden")
     showRedBG(msgElement, expiryTruthTable)
     noRepeat(msgElement, msgText, 9)
+  }
+}
+
+const validateCardExpiration = (
+  monthInput,
+  yearInput,
+  errorElement,
+  errorText,
+  id,
+  monthInputKey,
+  yearInputKey,
+  validationsResults,
+  validationResult,
+  monthInputValidationsResults,
+  yearInputValidationsResults,
+  BRstateArray
+) => {
+  if (isCurrentDateExpire(monthInput, yearInput)) {
+    validationsResults.set(monthInputKey, false)
+    validationsResults.set(yearInputKey, false)
+    validationResult.set(monthInputKey, false)
+    validationResult.set(yearInputKey, false)
+    monthInputValidationsResults.set(monthInputKey, false)
+    yearInputValidationsResults.set(yearInputKey, false)
+
+    monthInput.setCustomValidity("invalid expiration month")
+    yearInput.setCustomValidity("invalid expiration year")
+    appendErrorTextNodToElement(errorElement, errorText)
+    appendBRToErrorElement(errorElement, id, BRstateArray)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsResults,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsResults, "form__slash--invalid")
+    showError(errorElement)
+  } else {
+    validationsResults.set(monthInputKey, true)
+    validationsResults.set(yearInputKey, true)
+    validationResult.set(monthInputKey, true)
+    validationResult.set(yearInputKey, true)
+    monthInputValidationsResults.set(monthInputKey, true)
+    yearInputValidationsResults.set(yearInputKey, true)
+
+    removeMarkField(monthInput, monthInputValidationsResults)
+    removeMarkField(yearInput, yearInputValidationsResults)
+    removeErrorText(errorElement, errorText, validationResult)
+    removeBrById(errorElement, id, BRstateArray, validationResult)
+    setBorderRadius(
+      mmInput,
+      yyInput,
+      validationsResults,
+      "form__input--mm-invalid-right",
+      "form__input--yy-invalid-left"
+    )
+    setSlashInvalid(expirySlash, validationsResults, "form__slash--invalid")
+    hideError(yearInput, errorElement, validationsResults)
   }
 }
 
@@ -914,6 +1018,18 @@ const isMonthInEmpty = (mInput, msgElement, msgText) => {
 }
 
 //logic test
+const isCurrentDateExpire = (monthInput, yearInput) => {
+  const dateObj = new Date()
+  const currentMonth = dateObj.getMonth() + 1
+  const currentYear = dateObj.getFullYear()
+
+  return (
+    monthInput.value <= currentMonth &&
+    yearInput.value <= currentYear &&
+    yearInput.value.length == 4 &&
+    monthInput.value.length == 2
+  )
+}
 function isNumber(value) {
   return !isNaN(value)
 }
