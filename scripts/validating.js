@@ -68,8 +68,13 @@ const validateCHN = (evt) => {
   //while calling reportValidity() or submitting the form is called interactively validating the constraints.
 }
 /*TO DO
-//when focus loss check valid after value update and check result if emtpy yo show error to the user the input is empty
-//remove 
+1)when focus loss check valid after value update and check result if emtpy yo show error to the user the input is empty
+2)remove formtter from valdateNumberIsMonth
+3)chang logic check in validateCardExpiration to check only to last two digit in year input
+4)what to do with empty input field
+5)reset validtions when backspace and delet are enter
+6)min number
+
 
 **/
 
